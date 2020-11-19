@@ -1,48 +1,63 @@
 
-import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class demo{
-   public static void main(String[] args) {
-	   
-	  System.setProperty("webdriver.gecko.driver","C:\\Users\\Leo\\Downloads\\geckodriver-v0.28.0-win64\\geckodriver.exe");
-      WebDriver driver = new FirefoxDriver();
-      //Puts an Implicit wait, Will wait for 10 seconds before throwing exception
-      driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-      
-      //Launch website
-      driver.navigate().to("http://www.calculator.net/");
-      
-      //Maximize the browser
-      driver.manage().window().maximize();
-      
-      // Click on Math Calculators
-      driver.findElement(By.xpath("//*[@id=\"contentout\"]/table/tbody/tr/td[3]/div[2]/a")).click();
-      
-      // Click on Percent Calculators
-      driver.findElement(By.xpath("//*[@id=\"content\"]/table[2]/tbody/tr/td/div[3]/a")).click();
-      
-      // Enter value 10 in the first number of the percent Calculator
-      driver.findElement(By.id("cpar1")).sendKeys("10");
-      
-      // Enter value 50 in the second number of the percent Calculator
-      driver.findElement(By.id("cpar2")).sendKeys("50");
-      
-      // Click Calculate Button
-      driver.findElement(By.xpath(".//*[@id = 'content']/table/tbody/tr[2]/td/input[2]")).click();
+	static String result ;
+	
+	void percentCalculator(WebDriver driver,String value1,String value2) {
+		  driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+	      driver.navigate().to("http://www.calculator.net/");
+	      driver.manage().window().maximize();
 
-      
-      // Get the Result Text based on its xpath
-      String result =
-         driver.findElement(By.xpath(".//*[@id = 'content']/p[2]/font/b")).getText();
+	      driver.findElement(By.xpath("//*[@id=\"contentout\"]/table/tbody/tr/td[3]/div[2]/a")).click();
 
-      
-      // Print a Log In message to the screen
-      System.out.println(" The Result is " + result);
-      
-      //Close the Browser.
-      driver.close();
+	      driver.findElement(By.xpath("//*[@id=\"content\"]/table[2]/tbody/tr/td/div[3]/a")).click();
+
+	      driver.findElement(By.id("cpar1")).sendKeys(value1);
+
+	      driver.findElement(By.id("cpar2")).sendKeys(value2);
+
+	      driver.findElement(By.xpath(".//*[@id = 'content']/table/tbody/tr[2]/td/input[2]")).click();
+	      
+	}
+   
+   @Test
+   public void testPositive() {
+	   System.setProperty("webdriver.gecko.driver","C:\\Users\\Leo\\Downloads\\geckodriver-v0.28.0-win64\\geckodriver.exe");
+	      WebDriver driver = new FirefoxDriver();
+	      percentCalculator(driver,"10","50");
+	      result =
+	 	         driver.findElement(By.xpath(".//*[@id = 'content']/p[2]/font/b")).getText();
+	      driver.close();
+		assertEquals(result, "5" );
    }
+   
+   @Test
+   public void testNegative() {
+	   System.setProperty("webdriver.gecko.driver","C:\\Users\\Leo\\Downloads\\geckodriver-v0.28.0-win64\\geckodriver.exe");
+	      WebDriver driver = new FirefoxDriver();
+	      percentCalculator(driver,"-10","50");
+	      result =
+	 	         driver.findElement(By.xpath(".//*[@id = 'content']/p[2]/font/b")).getText();
+	      driver.close();
+		assertEquals(result, "-5" );
+   }
+   
+   @Test
+   public void testString() {
+	   System.setProperty("webdriver.gecko.driver","C:\\Users\\Leo\\Downloads\\geckodriver-v0.28.0-win64\\geckodriver.exe");
+	      WebDriver driver = new FirefoxDriver();
+	      percentCalculator(driver,"-10","palabra");
+	      result =
+	 	         driver.findElement(By.xpath("/html/body/div[3]/div[1]/p[2]")).getText();
+	      driver.close();
+		assertEquals(result,"Please provide two numeric values in any fields below.");
+   }
+   
 }
